@@ -80,7 +80,6 @@ ul,ol{ margin:0; padding:0; list-style:none }
   font-size:10.5px; font-weight:500; letter-spacing:.2em; text-transform:uppercase;
   color:var(--muted); display:flex; align-items:baseline; gap:12px;
 }
-.eyebrow::before{ content:""; width:26px; height:1px; background:currentColor; opacity:.6; transform:translateY(-4px); flex:none }
 
 .display{
   font-family:var(--serif); font-weight:300; font-optical-sizing:auto; line-height:1.04; letter-spacing:-.008em;
@@ -222,18 +221,18 @@ ul,ol{ margin:0; padding:0; list-style:none }
 .hero__comp-cap::before{ content:""; display:block; width:24px; height:1px; background:var(--line); margin-bottom:9px }
 
 /* -------------------------------------------------------- diferenciais --- */
-.diff__head{ display:grid; grid-template-columns:1fr; gap:20px; align-items:end }
-.diff__grid{
-  margin-top:clamp(34px,5vw,68px);
-  display:grid; grid-template-columns:1fr; gap:1px;
-  background:var(--line-soft); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);
-}
-.diff__item{ background:var(--paper-2); padding:clamp(24px,4vw,42px) clamp(18px,2.4vw,34px) }
-.tinted .diff__item{ background:var(--paper-2) }
-.diff__item .ico{ width:32px; height:32px; color:var(--navy) }
-.diff__item .ico svg{ width:100%; height:100% }
-.diff__item h3{ margin-top:18px; font-family:var(--serif); font-weight:400; font-size:clamp(1.22rem,3.2vw,1.4rem); line-height:1.2 }
-.diff__item p{ margin-top:9px; font-size:14px; line-height:1.6; color:var(--text-2); max-width:36ch }
+.diff__head h2{ max-width:22ch }
+.diff__body{ margin-top:clamp(34px,5vw,68px); display:grid; grid-template-columns:1fr; gap:clamp(28px,4vw,48px); align-items:start }
+.diff__list{ display:flex; flex-direction:column }
+.diff__list li{ display:flex; gap:16px; padding:16px 0; border-bottom:1px solid var(--line-soft) }
+.diff__list li:first-child{ padding-top:0 }
+.diff__list li:last-child{ border-bottom:0; padding-bottom:0 }
+.diff__list .ico{ width:24px; height:24px; color:var(--navy); flex:none; margin-top:3px }
+.diff__list .ico svg{ width:100%; height:100% }
+.diff__list h3{ font-family:var(--serif); font-weight:400; font-size:1.05rem; line-height:1.2 }
+.diff__list p{ margin-top:5px; font-size:13px; line-height:1.55; color:var(--text-2) }
+.diff__video{ aspect-ratio:16/9; border-radius:4px; overflow:hidden; background:var(--navy-deep); align-self:center }
+.diff__video video{ width:100%; height:100%; object-fit:cover; display:block }
 
 /* ------------------------------------------------------------ materiais --- */
 .mat__head{ display:grid; grid-template-columns:1fr; gap:20px; align-items:end }
@@ -256,29 +255,29 @@ ul,ol{ margin:0; padding:0; list-style:none }
 
 /* ------------------------------------------------------------- processo --- */
 .proc__head{ max-width:34ch }
-.proc__track{ margin-top:clamp(38px,5.5vw,76px); position:relative; padding-top:1px }
+.proc__track{ margin-top:clamp(26px,3.6vw,48px); position:relative; padding-top:1px }
 .proc__line{ position:absolute; left:0; right:0; top:0; height:1px; background:var(--line-light) }
 .proc__line span{ position:absolute; inset:0 auto 0 0; width:0; background:var(--blue); transition:width 2.4s var(--ease-o) }
 .proc__track.is-in .proc__line span{ width:100% }
 .proc__steps{ display:grid; grid-template-columns:1fr }
-.proc__step{ padding:clamp(22px,4vw,40px) 0; border-bottom:1px solid var(--line-light) }
+.proc__step{ padding:clamp(16px,2.6vw,26px) 0; border-bottom:1px solid var(--line-light) }
 .proc__step:last-child{ border-bottom:0 }
 .proc__step .n{ font-family:var(--serif); font-size:1.9rem; line-height:1; color:var(--blue) }
 .proc__step h3{ margin-top:14px; font-family:var(--serif); font-weight:400; font-size:clamp(1.28rem,3.4vw,1.45rem); color:#fff }
 .proc__step p{ margin-top:10px; font-size:14px; line-height:1.6; color:rgba(255,255,255,.66); max-width:36ch }
-.proc__note{ margin-top:clamp(32px,4.5vw,60px); display:flex; flex-wrap:wrap; gap:20px 40px; justify-content:space-between; align-items:center }
+.proc__note{ margin-top:clamp(20px,3vw,36px); display:flex; flex-wrap:wrap; gap:20px 40px; justify-content:space-between; align-items:center }
 .proc__note p{ font-size:13.5px; color:rgba(255,255,255,.66); max-width:52ch }
 
 /* ---------------------------------------------------- varejo e atacado --- */
-.vol__grid{ margin-top:clamp(32px,4.5vw,64px); display:grid; grid-template-columns:1fr; gap:clamp(16px,2vw,28px) }
-.vol__card{ background:var(--white); border:1px solid var(--line-soft); padding:clamp(26px,5vw,50px); display:flex; flex-direction:column }
+.vol__grid{ margin-top:clamp(22px,3vw,40px); display:grid; grid-template-columns:1fr; gap:clamp(16px,2vw,28px) }
+.vol__card{ background:var(--white); border:1px solid var(--line-soft); padding:clamp(20px,3.4vw,34px); display:flex; flex-direction:column }
 .vol__card--accent{ background:var(--navy); border-color:var(--navy); color:#fff }
 .vol__card .vol__kicker{ flex:none; margin-top:0; max-width:none; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted) }
 .vol__card--accent .vol__kicker{ color:var(--blue-pale) }
 .vol__card .vol__num{
-  flex:none; max-width:none; margin-top:16px;
+  flex:none; max-width:none; margin-top:10px;
   font-family:var(--serif); font-weight:400; line-height:.92;
-  font-size:clamp(3.2rem,13vw,4.6rem); letter-spacing:-.02em; color:var(--text);
+  font-size:clamp(2.8rem,11vw,3.9rem); letter-spacing:-.02em; color:var(--text);
   display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
   font-variant-numeric:lining-nums tabular-nums;
 }
@@ -288,11 +287,11 @@ ul,ol{ margin:0; padding:0; list-style:none }
 .vol__card h3{ margin-top:18px; font-family:var(--serif); font-weight:400; font-size:clamp(1.3rem,3.6vw,1.5rem) }
 .vol__card p{ margin-top:10px; font-size:14.2px; line-height:1.6; color:var(--text-2); max-width:38ch; flex:1 }
 .vol__card--accent p{ color:rgba(255,255,255,.74) }
-.vol__card ul{ margin-top:22px; border-top:1px solid var(--line-soft) }
+.vol__card ul{ margin-top:16px; border-top:1px solid var(--line-soft) }
 .vol__card--accent ul{ border-top-color:var(--line-light) }
-.vol__card li{ padding:11px 0; border-bottom:1px solid var(--line-soft); font-size:13.5px; color:var(--text-2) }
+.vol__card li{ padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:13.5px; color:var(--text-2) }
 .vol__card--accent li{ border-bottom-color:var(--line-light); color:rgba(255,255,255,.74) }
-.vol__card .btn,.vol__card .link-u{ margin-top:24px; align-self:flex-start }
+.vol__card .btn,.vol__card .link-u{ margin-top:18px; align-self:flex-start }
 .vol__note{ margin-top:22px; font-size:13.5px; color:var(--muted) }
 
 /* ----------------------------------------------------------- inspiração --- */
@@ -344,11 +343,11 @@ ul,ol{ margin:0; padding:0; list-style:none }
   border:1px dashed rgba(30,50,89,.45); color:var(--navy);
   font-size:10px; letter-spacing:.14em; text-transform:uppercase; padding:9px 13px; line-height:1.4;
 }
-.dep__grid{ margin-top:clamp(32px,4.5vw,60px); display:grid; grid-template-columns:1fr; gap:1px; background:var(--line-soft); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft) }
-.dep__item{ background:var(--paper); padding:clamp(26px,4vw,44px) clamp(18px,2.4vw,34px) }
-.dep__item blockquote{ font-family:var(--serif); font-size:clamp(1.2rem,3.4vw,1.45rem); line-height:1.34; color:var(--text) }
-.dep__item blockquote::before{ content:"“"; display:block; font-size:2.6rem; line-height:.5; color:var(--blue); margin-bottom:16px }
-.dep__item footer{ margin-top:22px; padding-top:15px; border-top:1px solid var(--line-soft); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted) }
+.dep__grid{ margin-top:clamp(22px,3vw,40px); display:grid; grid-template-columns:1fr; gap:1px; background:var(--line-soft); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft) }
+.dep__item{ background:var(--paper); padding:clamp(20px,3vw,30px) clamp(18px,2.4vw,34px); display:flex; flex-direction:column }
+.dep__item blockquote{ font-family:var(--serif); font-size:clamp(1.1rem,2.6vw,1.26rem); line-height:1.34; color:var(--text) }
+.dep__item blockquote::before{ content:"“"; display:block; font-size:2.2rem; line-height:.5; color:var(--blue); margin-bottom:14px }
+.dep__item footer{ margin-top:auto; padding-top:16px; border-top:1px solid var(--line-soft); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted) }
 
 /* ----------------------------------------------------------------- cta --- */
 .cta__in{ display:grid; grid-template-columns:1fr; gap:clamp(26px,4vw,60px); align-items:center }
@@ -470,10 +469,10 @@ ul,ol{ margin:0; padding:0; list-style:none }
   .masonry figure:hover img{ transform:scale(1.05) }
   .masonry figcaption{ opacity:0; transform:translateY(6px); transition:opacity .5s var(--ease), transform .5s var(--ease) }
   .masonry figure:hover figcaption,.masonry button:focus-visible figcaption{ opacity:1; transform:none }
-  .diff__item{ transition:background .5s var(--ease) }
-  .diff__item:hover{ background:var(--paper) }
-  .diff__item .ico{ transition:transform .6s var(--ease-o) }
-  .diff__item:hover .ico{ transform:translateY(-3px) }
+  .diff__list li{ transition:background .5s var(--ease) }
+  .diff__list li:hover{ background:var(--paper) }
+  .diff__list .ico{ transition:transform .6s var(--ease-o) }
+  .diff__list li:hover .ico{ transform:translateY(-3px) }
 }
 
 /* ================================================================ 480px === */
@@ -507,8 +506,7 @@ ul,ol{ margin:0; padding:0; list-style:none }
   .hero__comp{ align-self:start }
   /* a régua de números fecha na mesma linha de base da foto */
   .hero__meta{ align-self:end }
-  .diff__head{ grid-template-columns:1fr auto }
-  .diff__grid{ grid-template-columns:repeat(3,minmax(0,1fr)) }
+  .diff__body{ grid-template-columns:1.1fr 1fr }
   .mat__head{ grid-template-columns:1fr auto }
   .mat__grid{ grid-template-columns:repeat(4,minmax(0,1fr)) }
   .proc__steps{ grid-template-columns:repeat(4,minmax(0,1fr)) }
