@@ -9,15 +9,13 @@
   /* ------------------------------------------------------------------------
      INTERRUPTOR DAS ANIMAÇÕES
 
-     false  = todas as animações aparecem para todo mundo (padrão atual).
+     false  = as animações de entrada ficam ativas em todos os sistemas.
      true   = o site obedece o "reduzir movimento" do sistema do visitante
               (Windows: Configurações > Acessibilidade > Efeitos visuais >
               Efeitos de animação). Nesse modo, quem tiver a opção desligada
               vê só um fade suave, sem deslocamento, zoom, parallax nem a
               faixa rolante.
 
-     Está em false porque muitos Windows vêm com os efeitos de animação
-     desligados de fábrica, e aí o site parecia estático.
      ------------------------------------------------------------------------ */
   var RESPEITAR_MOVIMENTO_REDUZIDO = false;
 
@@ -34,9 +32,141 @@
     return RESPEITAR_MOVIMENTO_REDUZIDO && reduce.matches;
   };
 
-  // a classe libera as regras de CSS que a media query cortaria
-  if (!RESPEITAR_MOVIMENTO_REDUZIDO) {
-    document.documentElement.classList.add('mov-livre');
+  // Libera o movimento normal somente quando o sistema não pede redução.
+  function syncMotionClass() {
+    document.documentElement.classList.toggle('mov-livre', !isReduced());
+  }
+  syncMotionClass();
+  if (reduce.addEventListener) reduce.addEventListener('change', syncMotionClass);
+  else if (reduce.addListener) reduce.addListener(syncMotionClass);
+
+  /* ============================================= vídeo institucional == */
+  var heroVideo = document.getElementById('videoInstitucional');
+  var videoMute = document.getElementById('videoMute');
+  var mutedIcon = videoMute && videoMute.querySelector('[data-muted-icon]');
+  var audibleIcon = videoMute && videoMute.querySelector('[data-audible-icon]');
+  var heroVideoInView = false;
+
+  function paintVideoButton() {
+    if (!heroVideo || !videoMute) return;
+    var soundEnabled = !heroVideo.muted;
+    videoMute.setAttribute('aria-pressed', String(soundEnabled));
+    videoMute.setAttribute('aria-label', soundEnabled ? 'Silenciar áudio do vídeo' : 'Ativar áudio do vídeo');
+    if (mutedIcon) mutedIcon.hidden = !heroVideo.muted;
+    if (audibleIcon) audibleIcon.hidden = heroVideo.muted;
+  }
+
+  function syncHeroPlayback() {
+    if (!heroVideo) return;
+    if (heroVideoInView && !document.hidden && !isReduced()) {
+      var playRequest = heroVideo.play();
+      if (playRequest && playRequest.catch) playRequest.catch(function () {});
+    } else {
+      heroVideo.pause();
+    }
+  }
+
+  if (heroVideo) {
+    heroVideo.muted = true;
+    heroVideo.loop = true;
+    heroVideo.playsInline = true;
+    paintVideoButton();
+
+    if ('IntersectionObserver' in window) {
+      var videoObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.target !== heroVideo) return;
+          heroVideoInView = entry.isIntersecting && entry.intersectionRatio >= 0.2;
+          syncHeroPlayback();
+        });
+      }, { threshold: [0, 0.2, 0.5], rootMargin: '0px 0px -6% 0px' });
+      videoObserver.observe(heroVideo);
+    } else {
+      heroVideoInView = true;
+      syncHeroPlayback();
+    }
+
+    document.addEventListener('visibilitychange', syncHeroPlayback);
+    if (videoMute) {
+      videoMute.addEventListener('click', function () {
+        heroVideo.muted = !heroVideo.muted;
+        paintVideoButton();
+        syncHeroPlayback();
+      });
+    }
+
+    var onVideoMotionChange = function () {
+      syncMotionClass();
+      syncHeroPlayback();
+    };
+    if (reduce.addEventListener) reduce.addEventListener('change', onVideoMotionChange);
+    else if (reduce.addListener) reduce.addListener(onVideoMotionChange);
+  }
+
+  /* ============================================== carrossel feedback == */
+  var feedbackCarousel = document.getElementById('feedbackCarousel');
+  var feedbackViewport = document.getElementById('feedbackViewport');
+  var feedbackTrack = document.getElementById('feedbackTrack');
+  var feedbackCount = document.getElementById('feedbackCount');
+  var feedbackPrev = document.getElementById('feedbackPrev');
+  var feedbackNext = document.getElementById('feedbackNext');
+  var feedbackSlides = feedbackCarousel
+    ? Array.prototype.slice.call(feedbackCarousel.querySelectorAll('.dep__slide'))
+    : [];
+  var feedbackAt = 0;
+
+  function feedbackVisibleCount() {
+    if (window.matchMedia('(min-width: 900px)').matches) return 3;
+    if (window.matchMedia('(min-width: 640px)').matches) return 2;
+    return 1;
+  }
+
+  function paintFeedback(index) {
+    if (!feedbackSlides.length) return;
+    var visibleCount = Math.min(feedbackVisibleCount(), feedbackSlides.length);
+    var maxIndex = Math.max(feedbackSlides.length - visibleCount, 0);
+    feedbackAt = ((index % (maxIndex + 1)) + (maxIndex + 1)) % (maxIndex + 1);
+    feedbackSlides.forEach(function (slide, i) {
+      var active = i >= feedbackAt && i < feedbackAt + visibleCount;
+      slide.classList.toggle('is-active', active);
+      slide.setAttribute('aria-hidden', String(!active));
+      if ('inert' in slide) slide.inert = !active;
+    });
+    if (feedbackTrack && feedbackSlides[0]) {
+      var gap = parseFloat(window.getComputedStyle(feedbackTrack).columnGap) || 0;
+      var slideWidth = feedbackSlides[0].getBoundingClientRect().width;
+      feedbackTrack.style.transform = 'translate3d(' + (-feedbackAt * (slideWidth + gap)) + 'px,0,0)';
+    }
+    if (feedbackCount) {
+      var lastVisible = Math.min(feedbackAt + visibleCount, feedbackSlides.length);
+      feedbackCount.textContent = String(feedbackAt + 1).padStart(2, '0') + '–' + String(lastVisible).padStart(2, '0') + ' / ' + String(feedbackSlides.length).padStart(2, '0');
+    }
+  }
+
+  if (feedbackSlides.length) {
+    paintFeedback(0);
+    if (feedbackPrev) feedbackPrev.addEventListener('click', function () { paintFeedback(feedbackAt - 1); });
+    if (feedbackNext) feedbackNext.addEventListener('click', function () { paintFeedback(feedbackAt + 1); });
+    window.addEventListener('resize', function () { paintFeedback(feedbackAt); });
+    if (feedbackViewport) {
+      feedbackViewport.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); paintFeedback(feedbackAt - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); paintFeedback(feedbackAt + 1); }
+      });
+
+      var feedbackTouchX = null;
+      feedbackViewport.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse') return;
+        feedbackTouchX = e.clientX;
+      });
+      feedbackViewport.addEventListener('pointerup', function (e) {
+        if (feedbackTouchX === null) return;
+        var dx = e.clientX - feedbackTouchX;
+        feedbackTouchX = null;
+        if (Math.abs(dx) > 44) paintFeedback(feedbackAt + (dx < 0 ? 1 : -1));
+      });
+      feedbackViewport.addEventListener('pointercancel', function () { feedbackTouchX = null; });
+    }
   }
 
   /* ====================================================== header ======= */
@@ -97,7 +227,7 @@
     });
 
     nav.addEventListener('click', function (e) {
-      if (e.target.closest('a')) closeNav(false);
+      if (e.target.closest('a')) closeNav(true);
     });
 
     // o foco não escapa do painel enquanto ele cobre a tela
@@ -293,7 +423,8 @@
         filters.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
 
         cards.forEach(function (card) {
-          var show = cat === 'todos' || card.dataset.cat === cat;
+          var categories = (card.dataset.cat || '').split(/\s+/);
+          var show = cat === 'todos' || categories.indexOf(cat) !== -1;
           card.classList.toggle('is-hidden', !show);
           if (show) shown++;
         });
