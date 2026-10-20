@@ -6,6 +6,39 @@
 (function () {
   'use strict';
 
+  /* ============================ compartilhar logo + mensagem no WhatsApp == */
+  // O link wa.me não aceita anexos. Em navegadores compatíveis, use o
+  // compartilhamento do sistema para anexar a logo e o texto sem incluir URL.
+  // O visitante escolhe WhatsApp e o contato no seletor nativo.
+  var waLinks = document.querySelectorAll('a[href^="https://wa.me/"]');
+  var waLogoFile = null;
+
+  if (waLinks.length && navigator.share && navigator.canShare && window.File) {
+    fetch(new URL('img/og-voss.png', document.baseURI), { credentials: 'same-origin' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('Não foi possível carregar a logo da Voss.');
+        return response.blob();
+      })
+      .then(function (blob) {
+        waLogoFile = new File([blob], 'logo-voss.png', { type: 'image/png' });
+      })
+      .catch(function () {});
+
+    waLinks.forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (!waLogoFile || !navigator.canShare({ files: [waLogoFile] })) return;
+
+        event.preventDefault();
+        var message = new URL(link.href).searchParams.get('text') || 'Olá, vim pelo site da Voss Têxtil.';
+        navigator.share({ files: [waLogoFile], text: message }).catch(function (error) {
+          if (error && error.name === 'AbortError') return;
+          window.location.assign(link.href);
+        });
+      });
+    });
+  }
+
   /* ------------------------------------------------------------------------
      INTERRUPTOR DAS ANIMAÇÕES
 
