@@ -297,7 +297,9 @@ ul,ol{ margin:0; padding:0; list-style:none }
 /* ----------------------------------------------------------- inspiração --- */
 .insp__head{ display:grid; grid-template-columns:1fr; gap:20px; align-items:end }
 .masonry{ margin-top:clamp(30px,4vw,56px); column-count:2; column-gap:clamp(10px,1.4vw,22px) }
+.masonry.is-packed{ position:relative; display:block; column-count:initial }
 .masonry figure{ break-inside:avoid; margin:0 0 clamp(10px,1.4vw,22px); position:relative; overflow:hidden; background:var(--paper-2) }
+.masonry.is-packed figure{ position:absolute; top:0; left:0; margin:0; break-inside:auto }
 .masonry img{ width:100%; height:auto; transition:transform 1.5s var(--ease-o) }
 .masonry button{ display:block; width:100%; padding:0; cursor:zoom-in; position:relative }
 .masonry figcaption{

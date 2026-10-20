@@ -446,6 +446,54 @@
   var masonry = document.getElementById('masonry');
   var lastFocus = null;
 
+  // Distribui as fotos sempre pela coluna mais baixa. A altura da galeria
+  // deixa de depender do balanceamento de colunas do navegador, que varia
+  // entre Safari no iPhone e Chrome em outros aparelhos.
+  function layoutMasonry() {
+    if (!masonry) return;
+    var figures = Array.prototype.slice.call(masonry.querySelectorAll('figure'));
+    var width = masonry.clientWidth;
+    if (!figures.length || !width) return;
+
+    var columns = window.matchMedia('(min-width: 900px)').matches ? 4
+      : window.matchMedia('(min-width: 640px)').matches ? 3 : 2;
+    var gap = parseFloat(window.getComputedStyle(masonry).columnGap) || 0;
+    var columnWidth = (width - gap * (columns - 1)) / columns;
+    var heights = Array(columns).fill(0);
+
+    masonry.classList.add('is-packed');
+    figures.forEach(function (figure) {
+      figure.style.width = columnWidth + 'px';
+      figure.style.left = '0px';
+      figure.style.top = '0px';
+    });
+
+    figures.forEach(function (figure) {
+      var column = heights.indexOf(Math.min.apply(Math, heights));
+      var height = figure.offsetHeight;
+      if (!height) {
+        var image = figure.querySelector('img');
+        var imageWidth = image && parseFloat(image.getAttribute('width'));
+        var imageHeight = image && parseFloat(image.getAttribute('height'));
+        if (imageWidth && imageHeight) height = columnWidth * imageHeight / imageWidth;
+      }
+      figure.style.left = (column * (columnWidth + gap)) + 'px';
+      figure.style.top = heights[column] + 'px';
+      heights[column] += height + gap;
+    });
+
+    masonry.style.height = Math.max.apply(Math, heights) - gap + 'px';
+  }
+
+  if (masonry) {
+    layoutMasonry();
+    var masonryResizeTimer;
+    window.addEventListener('resize', function () {
+      window.clearTimeout(masonryResizeTimer);
+      masonryResizeTimer = window.setTimeout(layoutMasonry, 120);
+    }, { passive: true });
+  }
+
   var shots = masonry
     ? Array.prototype.slice.call(masonry.querySelectorAll('button'))
     : [];
